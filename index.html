@@ -202,6 +202,43 @@
         pointer-events: none;
       }
 
+      .photo-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+        filter: saturate(.96) contrast(.98) sepia(.08);
+      }
+
+      [data-key="art"] .photo-image { object-position: center center; }
+      [data-key="complexcon"] .photo-image { object-position: center center; }
+      [data-key="shikon"] .photo-image { object-position: center center; }
+      [data-key="cristal"] .photo-image { object-position: center center; }
+
+      .photo-image.is-missing {
+        display: none;
+      }
+
+      .photo-missing {
+        width: 100%;
+        height: 100%;
+        display: none;
+        place-items: center;
+        padding: 24px;
+        color: var(--muted);
+        text-align: center;
+        font-weight: 900;
+        line-height: 1.5;
+        background:
+          repeating-linear-gradient(135deg, rgba(22,32,51,.045) 0 1px, transparent 1px 10px),
+          #fff8e9;
+      }
+
+      .photo-image.is-missing + .photo-missing {
+        display: grid;
+      }
+
       svg {
         width: 100%;
         height: 100%;
@@ -566,39 +603,8 @@
           <article class="slide active" data-title="Art Basel Hong Kong" data-key="art">
             <h1>Art Basel Hong Kong</h1>
             <div class="art-card">
-              <svg viewBox="0 0 900 560" role="img" aria-label="Art Basel Hong Kong 英伦手绘风格插画">
-                <rect width="900" height="560" fill="#f7eedb" />
-                <path d="M0 392C160 334 316 368 456 348C610 326 742 336 900 386V560H0Z" class="wash-blue" stroke="#162033" stroke-width="3" />
-                <path d="M0 0H900V158H0Z" fill="#d8d3c6" stroke="#162033" stroke-width="3" />
-                <g class="thin">
-                  <path d="M0 38H900M0 78H900M0 118H900" />
-                  <path d="M56 0V158M118 0V158M180 0V158M242 0V158M304 0V158M366 0V158M428 0V158M490 0V158M552 0V158M614 0V158M676 0V158M738 0V158M800 0V158" />
-                </g>
-                <g class="thin">
-                  <path d="M46 42L160 15M246 44L370 14M448 42L586 12M668 44L842 12" />
-                  <circle cx="118" cy="96" r="11" fill="#fff8e9" />
-                  <circle cx="174" cy="96" r="8" fill="#fff8e9" />
-                </g>
-                <g>
-                  <path d="M68 332V188L238 136V350L68 394Z" fill="#f6ecd7" stroke="#162033" stroke-width="4" />
-                  <path d="M270 338V176L446 130V354L270 400Z" fill="#f6ecd7" stroke="#162033" stroke-width="4" />
-                  <path d="M640 338V180L810 218V398L640 358Z" fill="#f6ecd7" stroke="#162033" stroke-width="4" />
-                  <path d="M110 232h72v58h-72zM318 230h76v68h-76zM688 250h78v72h-78z" fill="#c7d3bd" stroke="#162033" stroke-width="2" />
-                </g>
-                <g transform="translate(286 68)">
-                  <path d="M24 112C58 24 212-5 342 32c76 22 116 62 106 104c-11 47-88 54-190 40C150 160 72 184 34 154C14 139 13 132 24 112Z" fill="#d5d8d2" stroke="#162033" stroke-width="4" />
-                  <path d="M62 104C126 50 226 28 334 56" class="white-line" />
-                  <path d="M88 144c84-22 172-24 266-4" stroke="#8f9895" stroke-width="10" fill="none" opacity=".6" />
-                  <path d="M76 118c55-42 112-68 172-78M134 150c42-56 95-88 160-98M236 166c25-50 62-80 110-90" class="thin" />
-                  <path d="M108 82c48 12 92 34 132 68M196 54c58 22 104 58 140 106" class="hatch" />
-                </g>
-                <text x="238" y="288" font-size="74" font-weight="900" font-family="Georgia, serif" fill="#fff8e9" stroke="#162033" stroke-width="2">Art | Basel</text>
-                <text x="300" y="356" font-size="58" font-weight="900" font-family="Georgia, serif" fill="#9b3d48" stroke="#162033" stroke-width="1.5">Hong Kong</text>
-                <g class="hatch">
-                  <path d="M34 444c140-34 280-44 420-28s282 12 410-24" />
-                  <path d="M80 410L20 560M236 382L190 560M412 366L428 560M610 370L690 560M760 398L884 560" />
-                </g>
-              </svg>
+              <img class="photo-image" src="./assets/art-basel.jpg" alt="Art Basel Hong Kong 展览现场" />
+              <div class="photo-missing">缺少图片：请上传 assets/art-basel.jpg</div>
               <button class="pin" data-pin="1" data-note="银色悬浮装置被处理成柔和水彩金属体，保留展厅中央记忆点。">1</button>
               <button class="pin" data-pin="2" data-note="天花网格和灯架像英国建筑速写中的结构线，画面更安静。">2</button>
               <button class="pin" data-pin="3" data-note="Aleezer & Even 可以在这里选一件最像今晚心情的作品。">3</button>
@@ -609,38 +615,8 @@
           <article class="slide" data-title="ComplexCon HK 2026" data-key="complexcon">
             <h2>ComplexCon HK 2026</h2>
             <div class="art-card">
-              <svg viewBox="0 0 900 560" role="img" aria-label="ComplexCon HK 2026 英伦手绘风格插画">
-                <rect width="900" height="560" fill="#f7eedb" />
-                <path d="M0 420L170 316L704 334L900 430V560H0Z" fill="#d9d4c8" stroke="#162033" stroke-width="3" />
-                <path d="M86 308V114L784 92V328L86 350Z" fill="#f6ecd7" stroke="#162033" stroke-width="4" />
-                <path d="M86 114L130 88L820 68L784 92Z" fill="#d8d0c0" stroke="#162033" stroke-width="3" />
-                <path d="M784 92L820 68V302L784 328Z" fill="#cfc6b8" stroke="#162033" stroke-width="3" />
-                <g class="thin">
-                  <path d="M124 144H736M124 182H736M124 220H736M124 258H736M124 296H736" />
-                  <path d="M160 120V326M224 118V326M288 116V326M352 114V326M416 112V326M480 110V326M544 108V326M608 106V326M672 104V326" />
-                </g>
-                <text x="118" y="214" font-size="68" font-weight="900" font-family="Arial Black, Arial" fill="#9b3d48" stroke="#162033" stroke-width="10" paint-order="stroke">COMPLEXCON</text>
-                <text x="118" y="214" font-size="68" font-weight="900" font-family="Arial Black, Arial" fill="none" stroke="#dcb2a7" stroke-width="2">COMPLEXCON</text>
-                <g transform="translate(382 228)">
-                  <path d="M58 56c-6-50 52-74 92-36c39 38 15 100-42 108c-61 8-108-24-108-72Z" fill="#d2a75f" stroke="#162033" stroke-width="4" />
-                  <path d="M42 40c19-46 72-70 113-36c-20 4-36 18-46 40c-23-18-45-19-67-4Z" fill="#c28c45" stroke="#162033" stroke-width="3" />
-                  <circle cx="74" cy="72" r="8" fill="#162033" />
-                  <circle cx="126" cy="72" r="8" fill="#162033" />
-                  <path d="M78 103c18 12 38 12 58 0" class="line" />
-                  <path d="M52 132h108v122H52Z" fill="#8fbfc5" stroke="#162033" stroke-width="4" />
-                  <path d="M36 92L2 72M154 92l42-20" stroke="#162033" stroke-width="9" fill="none" />
-                </g>
-                <g fill="#162033">
-                  <circle cx="64" cy="366" r="9" /><path d="M64 376v44" stroke="#162033" stroke-width="7" />
-                  <circle cx="110" cy="356" r="8" /><path d="M110 366v42" stroke="#162033" stroke-width="7" />
-                  <circle cx="154" cy="362" r="8" /><path d="M154 372v40" stroke="#162033" stroke-width="7" />
-                </g>
-                <path d="M712 370l92-42l48 30l-94 45Z" fill="#263047" stroke="#162033" stroke-width="3" />
-                <path d="M780 338l24-68M812 348l16-76" class="line" />
-                <g class="hatch">
-                  <path d="M32 466h820M104 404L20 560M230 372L128 560M380 354L260 560M560 362L426 560M742 392L610 560" />
-                </g>
-              </svg>
+              <img class="photo-image" src="./assets/complexcon.jpg" alt="ComplexCon HK 2026 展览现场" />
+              <div class="photo-missing">缺少图片：请上传 assets/complexcon.jpg</div>
               <button class="pin" data-pin="1" data-note="红黑字墙被统一到温莎红和墨线，保留潮流感但更像手绘海报。">1</button>
               <button class="pin" data-pin="2" data-note="卡通人物变成水彩主角，避免照片式杂乱。">2</button>
               <button class="pin" data-pin="3" data-note="可以记录你们最想一起入手的限定单品。">3</button>
@@ -651,39 +627,8 @@
           <article class="slide" data-title="Sushi Shikon" data-key="shikon">
             <h2>Sushi Shikon</h2>
             <div class="art-card">
-              <svg viewBox="0 0 900 560" role="img" aria-label="香港志魂餐厅英伦手绘风格插画">
-                <rect width="900" height="560" fill="#f7eedb" />
-                <path d="M0 0H900V158H0Z" fill="#c8a777" stroke="#162033" stroke-width="3" />
-                <g class="thin">
-                  <path d="M0 42H900M0 88H900" />
-                  <path d="M64 0L20 158M154 0L118 158M244 0L220 158M338 0L326 158M430 0V158M522 0L536 158M618 0L648 158M716 0L758 158M812 0L872 158" />
-                </g>
-                <g class="hatch">
-                  <path d="M46 24c84 18 170 14 260-6M394 24c116 20 236 16 360-8M88 118c96 14 208 10 336-8M512 118c86 14 180 10 280-6" />
-                </g>
-                <path d="M138 378L512 214L736 258L354 470Z" fill="#c99d63" stroke="#162033" stroke-width="5" />
-                <path d="M210 318L496 210L624 238L318 382Z" fill="#dfbd82" stroke="#162033" stroke-width="4" />
-                <path d="M366 398L736 252L824 278L456 482Z" fill="#b98b5d" stroke="#162033" stroke-width="4" />
-                <g class="hatch">
-                  <path d="M172 366c110-32 218-76 324-132M230 390c132-46 254-100 366-160M412 416c108-34 210-80 306-136" />
-                  <path d="M224 320c24 9 50 8 78-2M334 280c28 9 56 8 84-2M464 238c26 8 52 7 78-1" />
-                </g>
-                <g fill="#fff8e9" stroke="#162033" stroke-width="3">
-                  <ellipse cx="246" cy="292" rx="30" ry="12" />
-                  <ellipse cx="306" cy="270" rx="26" ry="11" />
-                  <ellipse cx="406" cy="238" rx="26" ry="11" />
-                  <path d="M492 290l54-16l40 11l-54 18zM548 318l56-18l40 12l-56 19zM606 346l56-20l40 12l-56 21zM664 374l56-22l40 13l-56 23z" />
-                </g>
-                <g fill="#3a2b24" stroke="#162033" stroke-width="3">
-                  <path d="M454 330l54-18l42 12l-54 20zM514 360l54-20l42 13l-54 21zM574 390l54-21l42 14l-54 22zM634 420l54-22l42 14l-54 24z" />
-                </g>
-                <path d="M70 226h116v146H70Z" fill="#c9aa7f" stroke="#162033" stroke-width="4" />
-                <path d="M88 250h78v32H88zM88 302h78v46H88z" fill="#f6ecd7" stroke="#162033" stroke-width="2" />
-                <circle cx="116" cy="198" r="36" fill="#f6ecd7" stroke="#162033" stroke-width="4" />
-                <path d="M92 198c30-32 55-32 82 0M84 198c38 28 72 28 110 0" stroke="#9b3d48" stroke-width="6" fill="none" />
-                <path d="M704 118h126v200H704Z" fill="#ead8b7" stroke="#162033" stroke-width="4" />
-                <path d="M728 118v200M752 118v200M776 118v200M800 118v200M704 160h126M704 204h126M704 248h126M704 292h126" class="thin" />
-              </svg>
+              <img class="photo-image" src="./assets/shikon.jpg" alt="香港志魂餐厅室内" />
+              <div class="photo-missing">缺少图片：请上传 assets/shikon.jpg</div>
               <button class="pin" data-pin="1" data-note="长木吧台被整理为干净的透视主体，木纹以轻排线呈现。">1</button>
               <button class="pin" data-pin="2" data-note="座位、餐盘、筷子都保留，但减少堆叠，让画面更优雅。">2</button>
               <button class="pin" data-pin="3" data-note="这一页适合写下今晚最喜欢的一口寿司。">3</button>
@@ -694,38 +639,8 @@
           <article class="slide" data-title="Cristal Room" data-key="cristal">
             <h2>Cristal Room by Anne-Sophie Pic</h2>
             <div class="art-card">
-              <svg viewBox="0 0 900 560" role="img" aria-label="Cristal Room 英伦手绘风格插画">
-                <rect width="900" height="560" fill="#f7eedb" />
-                <path d="M0 418L212 300L682 330L900 430V560H0Z" fill="#decdb5" stroke="#162033" stroke-width="3" />
-                <g class="thin">
-                  <path d="M0 432L900 454M0 486L900 520" />
-                  <path d="M80 392L0 540M186 370L78 560M318 354L196 560M480 356L342 560M660 374L510 560M820 404L680 560" />
-                </g>
-                <g fill="#fff8e9" stroke="#162033" stroke-width="2" opacity=".62">
-                  <path d="M58 438l94 4l-54 50l-98-7zM188 446l116 6l-66 62l-122-9zM350 458l138 10l-78 72l-144-12zM548 478l160 14l-96 82l-166-18z" />
-                </g>
-                <g transform="translate(252 92)">
-                  <path d="M0 228V70L58 0H540L622 72V242L540 312H62Z" fill="#263047" stroke="#162033" stroke-width="5" />
-                  <path d="M58 0H540L622 72H0Z" fill="#ead8b7" stroke="#162033" stroke-width="4" />
-                  <path d="M58 90H540V240H58Z" fill="#f1e6d2" stroke="#162033" stroke-width="4" />
-                  <path d="M92 122H508V174H92Z" fill="#fff4dc" stroke="#162033" stroke-width="3" />
-                  <path d="M95 196h50M164 196h50M233 196h50M302 196h50M371 196h50M440 196h50" stroke="#162033" stroke-width="6" />
-                  <path d="M60 240h480v76H60Z" fill="#d8c7b6" stroke="#162033" stroke-width="4" />
-                  <path d="M84 110h430M84 142h430M84 214h430" stroke="#c8b7a3" stroke-width="4" />
-                  <path d="M98 256c38-18 82-20 132-8M248 268c48-16 100-16 156 0M420 258c34-13 70-13 108 0" class="thin" />
-                </g>
-                <g transform="translate(336 188)" fill="#fff8e9" stroke="#162033" stroke-width="2">
-                  <path d="M0 40h22v58H0zM36 20h22v78H36zM72 0h22v98H72zM108 18h22v80h-22z" />
-                  <circle cx="11" cy="40" r="10" /><circle cx="47" cy="20" r="10" /><circle cx="83" cy="0" r="10" /><circle cx="119" cy="18" r="10" />
-                </g>
-                <g transform="translate(42 92)" fill="#f8ead1" stroke="#162033" stroke-width="3">
-                  <path d="M0 0h126v250H0z" />
-                  <path d="M20 20h28v210M62 20h28v210M104 20h16v210" />
-                  <circle cx="28" cy="58" r="12" /><circle cx="72" cy="86" r="12" /><circle cx="35" cy="132" r="12" /><circle cx="92" cy="158" r="12" />
-                </g>
-                <path d="M682 66h178v344H682Z" fill="#263047" stroke="#162033" stroke-width="5" />
-                <path d="M716 122h106v52M716 204h106v52M716 286h106v52" stroke="#fff8e9" stroke-width="13" />
-              </svg>
+              <img class="photo-image" src="./assets/cristal-room.jpg" alt="Cristal Room by Anne-Sophie Pic 室内" />
+              <div class="photo-missing">缺少图片：请上传 assets/cristal-room.jpg</div>
               <button class="pin" data-pin="1" data-note="大理石吧台和镜面酒柜变成柔和水彩结构，不再拥挤。">1</button>
               <button class="pin" data-pin="2" data-note="棋盘地面保留餐厅记忆点，但以浅色块呈现，手机端更清爽。">2</button>
               <button class="pin" data-pin="3" data-note="这一页适合放一杯餐前酒和一张正式合照。">3</button>
@@ -930,6 +845,11 @@
       }
 
       renderTabs();
+      document.querySelectorAll(".photo-image").forEach((image) => {
+        image.addEventListener("error", () => image.classList.add("is-missing"));
+        image.addEventListener("load", () => image.classList.remove("is-missing"));
+        if (image.complete && image.naturalWidth === 0) image.classList.add("is-missing");
+      });
       sync();
 
       prevBtn.addEventListener("click", () => goTo(current - 1));
