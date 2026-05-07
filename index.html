@@ -790,6 +790,7 @@
       let startedOnButton = false;
       let audio = null;
       let musicOn = false;
+      let musicTouchLock = false;
 
       function showToast(message) {
         toast.textContent = message;
@@ -837,12 +838,14 @@
         const master = ctx.createGain();
         const delay = ctx.createDelay();
         const feedback = ctx.createGain();
-        master.gain.value = 0.42;
+        const compressor = ctx.createDynamicsCompressor();
+        master.gain.value = 0.82;
         delay.delayTime.value = 0.18;
         feedback.gain.value = 0.18;
         delay.connect(feedback).connect(delay);
-        master.connect(delay).connect(ctx.destination);
-        master.connect(ctx.destination);
+        master.connect(delay).connect(compressor);
+        master.connect(compressor);
+        compressor.connect(ctx.destination);
         let timer;
         let bar = 0;
         const chords = [
@@ -864,21 +867,39 @@
           osc.start(start);
           osc.stop(start + duration + 0.04);
         }
+        function noiseHit(start) {
+          const bufferSize = ctx.sampleRate * 0.08;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i += 1) {
+            data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+          }
+          const source = ctx.createBufferSource();
+          const gain = ctx.createGain();
+          source.buffer = buffer;
+          gain.gain.setValueAtTime(0.18, start);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
+          source.connect(gain).connect(master);
+          source.start(start);
+        }
         function playBar() {
           const now = ctx.currentTime + 0.02;
           const chord = chords[bar % chords.length];
-          chord.forEach((freq, index) => tone(freq, now + index * 0.035, 1.35, 0.06));
-          tone(chord[0] / 2, now, 0.42, 0.09, "sine");
-          tone(chord[1] / 2, now + 0.58, 0.34, 0.055, "sine");
-          tone(melody[bar % melody.length], now + 0.94, 0.46, 0.052, "sine");
+          chord.forEach((freq, index) => tone(freq, now + index * 0.035, 1.35, 0.11));
+          tone(chord[0] / 2, now, 0.55, 0.16, "sine");
+          tone(chord[1] / 2, now + 0.58, 0.42, 0.1, "sine");
+          tone(melody[bar % melody.length], now + 0.94, 0.52, 0.095, "sine");
           bar += 1;
         }
         return {
           async start() {
             await ctx.resume();
             clearInterval(timer);
-            tone(783.99, ctx.currentTime + 0.01, 0.16, 0.08, "sine");
-            tone(987.77, ctx.currentTime + 0.13, 0.22, 0.065, "sine");
+            const now = ctx.currentTime;
+            noiseHit(now + 0.01);
+            tone(523.25, now + 0.01, 0.18, 0.22, "sine");
+            tone(783.99, now + 0.12, 0.22, 0.2, "sine");
+            tone(1046.5, now + 0.25, 0.28, 0.16, "sine");
             playBar();
             timer = setInterval(playBar, 1800);
           },
@@ -904,7 +925,8 @@
         await audio.start();
         musicOn = true;
         musicBtn.classList.add("playing");
-        showToast("City night ambience");
+        if (navigator.vibrate) navigator.vibrate(35);
+        showToast("Music on · 请确认手机非静音");
       }
 
       renderTabs();
@@ -912,7 +934,14 @@
 
       prevBtn.addEventListener("click", () => goTo(current - 1));
       nextBtn.addEventListener("click", () => goTo(current + 1));
-      musicBtn.addEventListener("click", toggleMusic);
+      musicBtn.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        if (musicTouchLock) return;
+        musicTouchLock = true;
+        toggleMusic().finally(() => setTimeout(() => {
+          musicTouchLock = false;
+        }, 350));
+      });
       wishBtn.addEventListener("click", () => wishDialog.showModal?.());
 
       stage.addEventListener("pointerdown", (event) => {
