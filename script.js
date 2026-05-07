@@ -1,3 +1,4 @@
+
 const slides = Array.from(document.querySelectorAll(".slide"));
 const dots = document.querySelector("#dots");
 const prevBtn = document.querySelector("#prevBtn");
@@ -14,9 +15,12 @@ const saveWish = document.querySelector("#saveWish");
 const savedWish = document.querySelector("#savedWish");
 const resetBtn = document.querySelector("#resetBtn");
 const musicBtn = document.querySelector("#musicBtn");
+const slidesEl = document.querySelector("#slides");
 
 let current = 0;
 let touchStartX = 0;
+let touchStartY = 0;
+let pointerStartedOnControl = false;
 let isMusicPlaying = false;
 let ambience = null;
 let licensedTrack = null;
@@ -98,3 +102,143 @@ function createCityStarsAmbience() {
 
   function tone(freq, start, duration, gainValue, type = "sine") {
     const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + duration + 0.03);
+  }
+
+  function playBar() {
+    const now = ctx.currentTime + 0.02;
+    const chord = chords[bar % chords.length];
+    chord.forEach((freq, index) => tone(freq, now + index * 0.025, 1.65, 0.018, "triangle"));
+    tone(chord[0] / 2, now, 0.55, 0.026, "sine");
+    tone(chord[1] / 2, now + 0.72, 0.42, 0.018, "sine");
+    tone(topNotes[bar % topNotes.length], now + 1.08, 0.58, 0.012, "sine");
+    bar += 1;
+  }
+
+  return {
+    async start() {
+      await ctx.resume();
+      playBar();
+      timer = window.setInterval(playBar, 1800);
+    },
+    stop() {
+      window.clearInterval(timer);
+    },
+  };
+}
+
+async function toggleMusic() {
+  if (isMusicPlaying) {
+    licensedTrack?.pause();
+    ambience?.stop();
+    isMusicPlaying = false;
+    musicBtn.classList.remove("playing");
+    showToast("City of Stars paused");
+    return;
+  }
+
+  if (!licensedTrack) {
+    licensedTrack = new Audio("./assets/city-of-stars.mp3");
+    licensedTrack.loop = true;
+    licensedTrack.preload = "auto";
+    licensedTrack.volume = 0.72;
+  }
+
+  try {
+    await licensedTrack.play();
+    isMusicPlaying = true;
+    musicBtn.classList.add("playing");
+    showToast("Playing City of Stars");
+  } catch {
+    ambience ||= createCityStarsAmbience();
+    if (!ambience) {
+      showToast("当前浏览器不支持音频播放");
+      return;
+    }
+    await ambience.start();
+    isMusicPlaying = true;
+    musicBtn.classList.add("playing");
+    showToast("City of Stars-style ambience");
+  }
+}
+
+renderDots();
+syncArchive();
+sync();
+
+prevBtn.addEventListener("click", () => goTo(current - 1));
+nextBtn.addEventListener("click", () => goTo(current + 1));
+musicBtn.addEventListener("click", toggleMusic);
+
+slidesEl.addEventListener("pointerdown", (event) => {
+  touchStartX = event.clientX;
+  touchStartY = event.clientY;
+  pointerStartedOnControl = Boolean(event.target.closest("button, textarea, dialog"));
+});
+
+slidesEl.addEventListener("pointerup", (event) => {
+  if (pointerStartedOnControl) return;
+  const delta = event.clientX - touchStartX;
+  const verticalDelta = Math.abs(event.clientY - touchStartY);
+  if (Math.abs(delta) < 58) return;
+  if (verticalDelta > Math.abs(delta) * 0.8) return;
+  if (delta < 0) goTo(current + 1);
+  if (delta > 0) goTo(current - 1);
+});
+
+document.querySelectorAll(".callout").forEach((callout) => {
+  callout.addEventListener("pointerup", (event) => event.stopPropagation());
+  callout.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const stamp = callout.dataset.stamp;
+    if (stamp) {
+      collected.add(stamp);
+      saveStamps();
+      syncArchive();
+      showToast(collected.size === validStamps.size ? "Love Atlas completed" : "Stamp collected");
+    }
+
+    noteTitle.textContent = stamp ? "Stamped Field Note" : "Field Note";
+    noteText.textContent = callout.dataset.note;
+    if (typeof noteDialog.showModal === "function") {
+      noteDialog.showModal();
+    }
+  });
+});
+
+wishBtn.addEventListener("click", () => {
+  syncWish();
+  if (typeof wishDialog.showModal === "function") {
+    wishDialog.showModal();
+  }
+});
+
+saveWish.addEventListener("click", () => {
+  const text = wishText.value.trim();
+  if (!text) {
+    showToast("先写一句想留住的话");
+    return;
+  }
+  wishes[String(current)] = text;
+  localStorage.setItem("ae-flipbook-wishes", JSON.stringify(wishes));
+  syncWish();
+  showToast("Note pinned");
+});
+
+resetBtn.addEventListener("click", () => {
+  collected.clear();
+  Object.keys(wishes).forEach((key) => delete wishes[key]);
+  localStorage.removeItem("ae-flipbook-stamps");
+  localStorage.removeItem("ae-flipbook-wishes");
+  syncArchive();
+  syncWish();
+  showToast("Archive cleared");
+});
