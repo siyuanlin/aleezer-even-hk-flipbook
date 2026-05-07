@@ -834,30 +834,51 @@
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return null;
         const ctx = new AudioContext();
+        const master = ctx.createGain();
+        const delay = ctx.createDelay();
+        const feedback = ctx.createGain();
+        master.gain.value = 0.42;
+        delay.delayTime.value = 0.18;
+        feedback.gain.value = 0.18;
+        delay.connect(feedback).connect(delay);
+        master.connect(delay).connect(ctx.destination);
+        master.connect(ctx.destination);
         let timer;
         let bar = 0;
-        const chords = [[261.63, 329.63, 392], [293.66, 349.23, 440], [220, 329.63, 392], [246.94, 329.63, 493.88]];
-        function tone(freq, start, duration, gainValue) {
+        const chords = [
+          [261.63, 329.63, 392.0, 493.88],
+          [293.66, 349.23, 440.0, 523.25],
+          [220.0, 329.63, 392.0, 493.88],
+          [246.94, 329.63, 415.3, 587.33],
+        ];
+        const melody = [659.25, 587.33, 523.25, 493.88, 440.0, 523.25, 392.0, 493.88];
+        function tone(freq, start, duration, gainValue, type = "triangle") {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = "triangle";
+          osc.type = type;
           osc.frequency.setValueAtTime(freq, start);
           gain.gain.setValueAtTime(0.0001, start);
-          gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.04);
+          gain.gain.exponentialRampToValueAtTime(gainValue, start + 0.025);
           gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-          osc.connect(gain).connect(ctx.destination);
+          osc.connect(gain).connect(master);
           osc.start(start);
           osc.stop(start + duration + 0.04);
         }
         function playBar() {
           const now = ctx.currentTime + 0.02;
-          chords[bar % chords.length].forEach((freq, index) => tone(freq, now + index * 0.04, 1.45, 0.02));
-          tone(chords[bar % chords.length][0] / 2, now, 0.52, 0.026);
+          const chord = chords[bar % chords.length];
+          chord.forEach((freq, index) => tone(freq, now + index * 0.035, 1.35, 0.06));
+          tone(chord[0] / 2, now, 0.42, 0.09, "sine");
+          tone(chord[1] / 2, now + 0.58, 0.34, 0.055, "sine");
+          tone(melody[bar % melody.length], now + 0.94, 0.46, 0.052, "sine");
           bar += 1;
         }
         return {
           async start() {
             await ctx.resume();
+            clearInterval(timer);
+            tone(783.99, ctx.currentTime + 0.01, 0.16, 0.08, "sine");
+            tone(987.77, ctx.currentTime + 0.13, 0.22, 0.065, "sine");
             playBar();
             timer = setInterval(playBar, 1800);
           },
